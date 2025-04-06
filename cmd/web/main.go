@@ -5,18 +5,13 @@ import (
 	"net/http"
 )
 
-// Home handler function
-// Parameters:
-// - http.ResponseWriter: HTTP response
-// - *http.Request: pointer to the current request
-func home(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Hello from Snippetbox"))
-}
-
 func main() {
 	// Initialize servemux (router)
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", home)
+	mux.HandleFunc("GET /{$}", home)
+	mux.HandleFunc("GET /snippet/view/{id}", snippetView)
+	mux.HandleFunc("GET /snippet/create", snippetCreate)
+	mux.HandleFunc("POST /snippet/create", snippetCreatePost)
 
 	// Log statements
 	log.Println("starting server on :4000")
