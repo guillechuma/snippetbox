@@ -1,11 +1,19 @@
 package main
 
 import (
-	"log"
+	"flag"
+	"log/slog"
 	"net/http"
+	"os"
 )
 
 func main() {
+
+	addr := flag.String("addr", ":4000", "HTTP network address")
+	flag.Parse()
+
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
 	// Initialize servemux (router)
 	mux := http.NewServeMux()
 
@@ -18,10 +26,11 @@ func main() {
 	mux.HandleFunc("POST /snippet/create", snippetCreatePost)
 
 	// Log statements
-	log.Println("starting server on :4000")
+	logger.Info("starting server", "addr", *addr)
 
 	// Start a new web server
 	// Parameters: TCP network adress to listen,and servemux
-	err := http.ListenAndServe(":4000", mux)
-	log.Fatal(err)
+	err := http.ListenAndServe(*addr, mux)
+	logger.Error(err.Error())
+	os.Exit(1)
 }
